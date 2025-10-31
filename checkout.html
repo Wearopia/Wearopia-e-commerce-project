@@ -1,0 +1,1883 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wearopia – Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./CSS/navbar.css">
+  <link rel="stylesheet" href="CSS/checkout.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: "Inter", -apple-system, sans-serif;
+      font-size: 16px;
+      background: #FFF;
+      color: #000;
+    }
+
+    /* Toast Notifications */
+    .toast-container { 
+      position:fixed; 
+      top:24px; 
+      right:24px; 
+      z-index:9999; 
+      display:flex; 
+      flex-direction:column; 
+      gap:12px; 
+    }
+    .toast-notification { 
+      display:flex; 
+      align-items:center; 
+      gap:12px; 
+      background:white; 
+      padding:16px 20px; 
+      border-radius:12px; 
+      box-shadow:0 8px 24px rgba(0,0,0,.12); 
+      min-width:320px; 
+      animation:slideIn .3s ease; 
+    }
+    .toast-icon { 
+      width:24px; 
+      height:24px; 
+      flex-shrink:0; 
+    }
+    .toast-content { 
+      flex:1; 
+    }
+    .toast-title { 
+      font-size:14px; 
+      font-weight:600; 
+      color:#23262F; 
+      margin-bottom:4px; 
+    }
+    .toast-message { 
+      font-size:13px; 
+      color:#777E90; 
+    }
+    @keyframes slideIn { 
+      from { 
+        transform:translateX(400px); 
+        opacity:0; 
+      } 
+      to { 
+        transform:translateX(0); 
+        opacity:1; 
+      } 
+    }
+    @keyframes fadeOut { 
+      to { 
+        opacity:0; 
+        transform:translateX(400px); 
+      } 
+    }
+
+    .checkout-container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .back-to-cart {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #198754;
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 24px;
+      transition: color 0.2s;
+    }
+
+    .back-to-cart:hover {
+      color: #146c43;
+    }
+
+    .steps-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      margin-bottom: 48px;
+      justify-content: center;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .step-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .step-item.active .step-circle {
+      background: #198754;
+      color: #fff;
+    }
+
+    .step-item.completed .step-circle {
+      background: #198754;
+      color: #fff;
+    }
+
+    .step-item.inactive .step-circle {
+      background: #E6E8EC;
+      color: #777E90;
+    }
+
+    .step-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #23262F;
+    }
+
+    .step-item.inactive .step-label {
+      color: #777E90;
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 64px;
+    }
+
+    .form-section {
+      background: #FFF;
+      border: 1px solid #6C7275;
+      border-radius: 6px;
+      padding: 40px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #000;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6C7275;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      height: 40px;
+      border: 1px solid #CBCBCB;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 16px;
+      color: #000;
+    }
+
+    .form-control:focus {
+      border-color: #000;
+      box-shadow: none;
+      outline: none;
+    }
+
+    .form-control::placeholder {
+      color: #6C7275;
+    }
+
+    .form-select {
+      height: 40px;
+      border: 1px solid #CBCBCB;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 16px;
+      color: #6C7275;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236C7275' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    .form-select:focus {
+      border-color: #000;
+      box-shadow: none;
+    }
+
+    .form-check {
+      padding-left: 1.8em;
+      margin-top: 16px;
+    }
+
+    .form-check-input {
+      width: 20px;
+      height: 20px;
+      margin-top: 0;
+      border: 1px solid #6C7275;
+      cursor: pointer;
+    }
+
+    .form-check-input:checked {
+      background-color: #198754;
+      border-color: #198754;
+    }
+
+    .form-check-label {
+      font-size: 16px;
+      color: #6C7275;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .payment-option {
+      border: 1px solid #6C7275;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .payment-option:hover {
+      border-color: #000;
+    }
+
+    .payment-option.active {
+      border-color: #198754;
+      background: #F8F9FA;
+    }
+
+    .payment-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .payment-radio {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #6C7275;
+      border-radius: 50%;
+      cursor: pointer;
+      accent-color: #198754;
+    }
+
+    .payment-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+      cursor: pointer;
+    }
+
+    .card-icon {
+      width: 32px;
+      height: 24px;
+    }
+
+    .btn-place-order {
+      width: 100%;
+      height: 52px;
+      background: #198754;
+      color: #FFF;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-place-order:hover {
+      background: #146c43;
+    }
+
+    .btn-place-order:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .summary-card {
+      background: #FFF;
+      border: 1px solid #6C7275;
+      border-radius: 6px;
+      padding: 24px;
+      position: sticky;
+      top: 24px;
+    }
+
+    .summary-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #000;
+    }
+
+    .order-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #E8ECEF;
+    }
+
+    .order-item:last-of-type {
+      border-bottom: none;
+      margin-bottom: 24px;
+    }
+
+    .item-image {
+      width: 80px;
+      height: 96px;
+      background: #F3F5F7;
+      border-radius: 6px;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 4px;
+    }
+
+    .item-color {
+      font-size: 12px;
+      color: #6C7275;
+      margin-bottom: 8px;
+    }
+
+    .item-qty-text {
+      font-size: 12px;
+      color: #6C7275;
+      font-weight: 500;
+    }
+
+    .item-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+      text-align: right;
+    }
+
+    .discount-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #F3F5F7;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .discount-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .discount-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .discount-code {
+      font-size: 14px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .discount-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #198754;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .summary-label {
+      color: #000;
+      font-weight: 400;
+    }
+
+    .summary-value {
+      color: #000;
+      font-weight: 600;
+    }
+
+    .total-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid #6C7275;
+    }
+
+    .total-label {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .total-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    @media (max-width: 992px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      
+      .form-section {
+        padding: 24px;
+      }
+
+      .step-label {
+        display: none;
+      }
+
+      .steps-wrapper {
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .checkout-container {
+        padding: 24px 16px;
+      }
+    }
+.container,
+.footer {
+  padding-left: 120px;
+  padding-right: 120px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+  .container,
+  .footer {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container,
+  .footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+  </style>
+
+</head>
+<body>
+    <div id="navbar-placeholder"></div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toast-container"></div>
+
+
+
+<div class="checkout-container">
+  <a href="shopping-cart.html" class="back-to-cart">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to Cart
+  </a>
+
+  <!-- Steps -->
+  <div class="steps-wrapper">
+    <div class="step-item completed">
+      <div class="step-circle">✓</div>
+      <div class="step-label">Shopping cart</div>
+    </div>
+    <div class="step-item active">
+      <div class="step-circle">2</div>
+      <div class="step-label">Checkout details</div>
+    </div>
+    <div class="step-item inactive">
+      <div class="step-circle">3</div>
+      <div class="step-label">Order complete</div>
+    </div>
+  </div>
+
+  <div class="checkout-grid">
+    <div>
+      <!-- Contact Information -->
+      <div class="form-section">
+        <h2 class="section-title">Contact Information</h2>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">First Name *</label>
+            <input type="text" class="form-control" placeholder="First name" id="firstName" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-control" placeholder="Last name" id="lastName">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Phone Number *</label>
+            <input type="tel" class="form-control" placeholder="Phone number" id="phone" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Email Address *</label>
+            <input type="email" class="form-control" placeholder="Your Email" id="email" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <div class="form-section">
+        <h2 class="section-title">Shipping Address</h2>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Street Address *</label>
+            <input type="text" class="form-control" placeholder="Street Address" id="address" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Country *</label>
+            <select class="form-select" id="country" required>
+              <option value="">Select Country</option>
+              <option value="United States">United States</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Egypt">Egypt</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Town / City *</label>
+            <input type="text" class="form-control" placeholder="Town / City" id="city" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">State</label>
+            <input type="text" class="form-control" placeholder="State" id="state">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Zip Code</label>
+            <input type="text" class="form-control" placeholder="Zip Code" id="zipCode">
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="differentBilling">
+              <label class="form-check-label" for="differentBilling">
+                Use a different billing address (optional)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Method -->
+      <div class="form-section">
+        <h2 class="section-title">Payment method</h2>
+        
+        <div class="payment-option active" onclick="selectPayment(this)">
+          <div class="payment-left">
+            <input type="radio" name="payment" class="payment-radio" value="Credit Card" checked>
+            <span class="payment-label">Pay by Card Credit</span>
+          </div>
+          <svg class="card-icon" viewBox="0 0 32 24" fill="none">
+            <rect width="32" height="24" rx="4" fill="#E8ECEF"/>
+            <rect x="2" y="8" width="28" height="3" fill="#6C7275"/>
+            <rect x="2" y="15" width="8" height="2" fill="#6C7275"/>
+          </svg>
+        </div>
+
+        <div class="payment-option" onclick="selectPayment(this)">
+          <div class="payment-left">
+            <input type="radio" name="payment" class="payment-radio" value="Cash on Delivery">
+            <span class="payment-label">Cash on delivery</span>
+          </div>
+        </div>
+
+        <div id="cardFields" class="mt-3">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Card Number</label>
+              <input type="text" class="form-control" placeholder="1234 1234 1234 1234" maxlength="19" id="cardNumber">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Expiration Date</label>
+              <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" id="expiryDate">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">CVC</label>
+              <input type="text" class="form-control" placeholder="CVC code" maxlength="3" id="cvc">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Place Order Button -->
+      <button class="btn-place-order" id="placeOrderBtn">Place Order</button>
+    </div>
+
+    <!-- Right Column - Order Summary -->
+    <div>
+      <div class="summary-card">
+        <h3 class="summary-title">Order summary</h3>
+
+        <!-- Order Items Container -->
+        <div id="orderItemsContainer"></div>
+
+        <!-- Discount Badge -->
+        <div class="discount-badge" id="discountBadge" style="display: none;">
+          <div class="discount-left">
+            <svg class="discount-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12L11 14L15 10M21 12C21 13.78 20.4722 15.5201 19.4832 17.0001C18.4943 18.4802 17.0887 19.6337 15.4442 20.3149C13.7996 20.9961 11.99 21.1743 10.2442 20.8271C8.49836 20.4798 6.89472 19.6226 5.63604 18.364C4.37737 17.1053 3.5202 15.5016 3.17294 13.7558C2.82567 12.01 3.0039 10.2004 3.68509 8.55585C4.36628 6.91131 5.51983 5.50571 6.99987 4.51677C8.47991 3.52784 10.22 3 12 3C14.387 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12Z" stroke="#198754" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="discount-code" id="couponCode">Discount</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="discount-value" id="discountValue">-$0.00</span>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-line">
+          <span class="summary-label">Shipping</span>
+          <span class="summary-value" id="shippingCost">Free</span>
+        </div>
+        <div class="summary-line">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-value" id="subtotal">$0.00</span>
+        </div>
+
+        <div class="total-line">
+          <span class="total-label">Total</span>
+          <span class="total-value" id="total">$0.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--stay in style-->
+<section class="hero3 text-center py-5" style="background-color: #f1f1f5;">
+  <div class="container px-4">
+    <h2 class="fw-bold text-dark mb-3" style="font-family: 'Poppins', sans-serif;">
+      Stay in Style
+    </h2>
+    <p class="text-secondary mb-4 mx-auto" style="max-width: 600px; font-family: 'Poppins', sans-serif;">
+      Subscribe to our newsletter and be the first to know about new arrivals, exclusive offers, and fashion
+      tips.
+    </p>
+
+    <form class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3 mt-3 w-100">
+      <div class="position-relative" style="max-width: 340px; width: 100%;">
+        <i class="fa-solid fa-envelope text-muted position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+        <input type="email" class="form-control ps-5 rounded-pill shadow-sm border-0" placeholder="Enter your email"
+          required />
+      </div>
+
+      <button type="submit" class="btn fw-semibold text-white rounded-pill px-4 py-2"
+        style="background-color: hsl(158, 74%, 23%); min-width: 130px;">
+        Subscribe
+      </button>
+    </form>
+  </div>
+</section>
+<!--end of stay in style-->
+<!--footer component-->
+<footer class="container-fluid bg-white d-flex align-items-center custom-footer">
+  <div class="container">
+    <div class="row gy-4 gx-5">
+      <div class="col-12 col-md-6 col-lg-3">
+        <h4 class="fw-bold text-success mb-3 fs-3">Wearopia</h4>
+        <p class="text-secondary small mb-4">
+          Discover your unique style with our curated collection of modern fashion pieces.
+        </p>
+
+        <ul class="list-unstyled text-secondary small mb-4">
+          <li class="mb-2">
+            <i class="fa-solid fa-location-dot me-2"></i>123 Fashion Street, Style City, SC 12345
+          </li>
+          <li class="mb-2">
+            <i class="fa-solid fa-phone me-2"></i>+1 (555) 123-STYLE
+          </li>
+          <li>
+            <i class="fa-solid fa-envelope me-2"></i>hello@stylehub.com
+          </li>
+        </ul>
+
+        <div class="d-flex gap-3">
+          <a href="#"
+            class="d-flex align-items-center justify-content-center border border-secondary rounded-circle text-dark text-decoration-none fs-6 social-icon">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+          <a href="#"
+            class="d-flex align-items-center justify-content-center border border-secondary rounded-circle text-dark text-decoration-none fs-6 social-icon">
+            <i class="fa-brands fa-twitter"></i>
+          </a>
+          <a href="#"
+            class="d-flex align-items-center justify-content-center border border-secondary rounded-circle text-dark text-decoration-none fs-6 social-icon">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href="#"
+            class="d-flex align-items-center justify-content-center border border-secondary rounded-circle text-dark text-decoration-none fs-6 social-icon">
+            <i class="fa-brands fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-12 col-md-3 col-lg-3">
+        <h5 class="fw-semibold text-black fs-6 mb-3">Quick Links</h5>
+        <ul class="list-unstyled text-secondary small">
+          <li class="mb-2">New Arrivals</li>
+          <li class="mb-2">Best Sellers</li>
+          <li class="mb-2">Sale</li>
+          <li class="mb-2">Gift Cards</li>
+          <li>Style Guide</li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-3 col-lg-3">
+        <h5 class="fw-semibold text-black fs-6 mb-3">Customer Care</h5>
+        <ul class="list-unstyled text-secondary small">
+          <li class="mb-2">Contact Us</li>
+          <li class="mb-2">Size Guide</li>
+          <li class="mb-2">Shipping & Returns</li>
+          <li class="mb-2">Track Your Order</li>
+          <li>FAQ</li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <h5 class="fw-semibold text-black fs-6 mb-3">Company</h5>
+        <ul class="list-unstyled text-secondary small">
+          <li class="mb-2">About Us</li>
+          <li class="mb-2">Careers</li>
+          <li class="mb-2">Press</li>
+          <li class="mb-2">Sustainability</li>
+          <li>Investors</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</footer>
+<!--end of footer-->
+
+
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="JavaScript/navbar-test.js"></script>
+
+  <script>
+    $('<link/>', {
+  rel: 'stylesheet',
+  type: 'text/css',
+  href: 'CSS/navbar.css'
+}).appendTo('head');
+
+    $("#navbar-placeholder").load("navbar-test.html", function () {
+      initNavbar();
+      renderWishlist();
+    });
+
+    function renderWishlist() {
+      let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      const container = $("#wishlistItems");
+      container.empty();
+
+      if (wishlist.length === 0) {
+        container.html("<p class='text-center text-muted'>Your wishlist is empty 💔</p>");
+        return;
+      }
+
+      wishlist.forEach((item, index) => {
+        container.append(`
+          <div class="wishlist-item">
+            <h5>${item.name}</h5>
+            <button class="btn btn-sm btn-danger remove-item" data-index="${index}">
+              <i class="bi bi-trash"></i> Remove
+            </button>
+          </div>
+        `);
+      });
+
+      $(".remove-item").on("click", function () {
+        const index = $(this).data("index");
+        wishlist.splice(index, 1);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        renderWishlist();
+        Swal.fire("Removed!", "Item removed from wishlist.", "success");
+      });
+    }
+  </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+// Helper: Luhn algorithm for credit card validation
+function validateCreditCard(number) {
+  const clean = number.replace(/\D/g, '');
+  if (!/^\d{13,19}$/.test(clean)) return false;
+  let sum = 0;
+  let doubleIt = false;
+  for (let i = clean.length - 1; i >= 0; i--) {
+    let digit = parseInt(clean[i]);
+    if (doubleIt) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    doubleIt = !doubleIt;
+  }
+  return sum % 10 === 0;
+}
+
+// --- Updated Place Order with All Validations ---
+function placeOrder() {
+  const firstName = document.getElementById('firstName');
+  const lastName = document.getElementById('lastName');
+  const phone = document.getElementById('phone');
+  const email = document.getElementById('email');
+  const address = document.getElementById('address');
+  const country = document.getElementById('country');
+  const city = document.getElementById('city');
+  const cardNumber = document.getElementById('cardNumber');
+  const expiry = document.getElementById('expiryDate');
+  const cvc = document.getElementById('cvc');
+
+  // Helper: scroll + focus on invalid field
+  function focusAndScroll(element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    element.focus();
+  }
+
+  // --- Name validation ---
+  const nameRegex = /^[A-Za-z]+$/;
+  if (!nameRegex.test(firstName.value.trim())) {
+    showToast('Invalid Name', 'First name must contain letters only', 'error');
+    focusAndScroll(firstName);
+    return;
+  }
+  if (lastName.value.trim() && !nameRegex.test(lastName.value.trim())) {
+    showToast('Invalid Name', 'Last name must contain letters only', 'error');
+    focusAndScroll(lastName);
+    return;
+  }
+
+  // --- Phone validation ---
+  const phoneValue = phone.value.trim();
+  const phoneRegex = /^\d{10,15}$/; // 10–15 digits only
+  if (!phoneRegex.test(phoneValue)) {
+    showToast('Invalid Phone', 'Please enter a valid phone number (10–15 digits)', 'error');
+    focusAndScroll(phone);
+    return;
+  }
+
+  // --- Email validation ---
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.value.trim())) {
+    showToast('Invalid Email', 'Please enter a valid email address', 'error');
+    focusAndScroll(email);
+    return;
+  }
+
+  // --- Address validation ---
+  if (!address.value.trim()) {
+    showToast('Missing Information', 'Please enter your street address', 'warning');
+    focusAndScroll(address);
+    return;
+  }
+
+  if (!country.value) {
+    showToast('Missing Information', 'Please select your country', 'warning');
+    focusAndScroll(country);
+    return;
+  }
+
+  if (!city.value.trim()) {
+    showToast('Missing Information', 'Please enter your city', 'warning');
+    focusAndScroll(city);
+    return;
+  }
+
+  // --- Payment validation (Credit Card) ---
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+  if (paymentMethod === 'Credit Card') {
+    if (!validateCreditCard(cardNumber.value.trim())) {
+      showToast('Invalid Card', 'Please enter a valid credit card number', 'error');
+      focusAndScroll(cardNumber);
+      return;
+    }
+
+    const expMatch = expiry.value.trim().match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+    if (!expMatch) {
+      showToast('Invalid Expiry', 'Expiration must be in MM/YY format', 'error');
+      focusAndScroll(expiry);
+      return;
+    }
+
+    const [_, mm, yy] = expMatch;
+    const expDate = new Date(`20${yy}`, mm);
+    const now = new Date();
+    if (expDate <= now) {
+      showToast('Expired Card', 'This card has expired', 'error');
+      focusAndScroll(expiry);
+      return;
+    }
+
+    if (!/^\d{3}$/.test(cvc.value.trim())) {
+      showToast('Invalid CVC', 'CVC must be 3 digits', 'error');
+      focusAndScroll(cvc);
+      return;
+    }
+  }
+
+  // --- Continue checkout logic ---
+  const checkoutData = loadCheckoutData();
+  if (!checkoutData) {
+    showToast('Empty Cart', 'Your cart is empty', 'error');
+    return;
+  }
+
+  const orderId = generateOrderId();
+  const orderData = {
+    orderId,
+    customer: {
+      firstName: firstName.value.trim(),
+      lastName: lastName.value.trim(),
+      phone: phone.value.trim(),
+      email: email.value.trim()
+    },
+    shipping: {
+      address: address.value.trim(),
+      country: country.value,
+      city: city.value.trim(),
+      state: document.getElementById('state').value,
+      zipCode: document.getElementById('zipCode').value
+    },
+    payment: { method: paymentMethod },
+    items: checkoutData.items,
+    subtotal: checkoutData.subtotal,
+    total: checkoutData.total,
+    orderDate: new Date().toISOString()
+  };
+
+  sessionStorage.setItem('wearopia_order_complete', JSON.stringify(orderData));
+  sessionStorage.removeItem('wearopia_checkout_data');
+  localStorage.removeItem('wearopia_cart_v1');
+
+  showToast('Order Placed!', 'Redirecting to confirmation...', 'success');
+  setTimeout(() => (window.location.href = 'complete-order.html'), 1200);
+}
+
+</script>
+<script>
+// Toast notification function
+function showToast(title, message, type = 'success') {
+  const toastContainer = document.getElementById('toast-container');
+  const icons = {
+    success: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#58BD7D"/><path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    error: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#FF6A55"/><path d="M15 9L9 15M9 9L15 15" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>',
+    warning: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#FFB020"/><path d="M12 7V13M12 16V17" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>'
+  };
+  const toast = document.createElement('div');
+  toast.className = `toast-notification toast-${type}`;
+  toast.innerHTML = `${icons[type]}<div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div>`;
+  toastContainer.appendChild(toast);
+  setTimeout(() => { 
+    toast.style.animation = 'fadeOut .3s ease forwards'; 
+    setTimeout(() => toast.remove(), 300); 
+  }, 3000);
+}
+
+// Navbar functionality
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+let wishlistCount = 0;
+let cartCount = 0;
+
+const wishlistBadge = document.getElementById('wishlistCount');
+const cartBadge = document.getElementById('cartCount');
+
+menuToggle.addEventListener('click', () => {
+  mobileMenu.classList.toggle('show');
+  const icon = menuToggle.querySelector('i');
+  
+  if (mobileMenu.classList.contains('show')) {
+    icon.classList.remove('bi-list');
+    icon.classList.add('bi-x');
+  } else {
+    icon.classList.remove('bi-x');
+    icon.classList.add('bi-list');
+  }
+});
+
+// Payment selection
+function selectPayment(element) {
+  document.querySelectorAll('.payment-option').forEach(opt => {
+    opt.classList.remove('active');
+    opt.querySelector('.payment-radio').checked = false;
+  });
+  element.classList.add('active');
+  element.querySelector('.payment-radio').checked = true;
+
+  const cardFields = document.getElementById('cardFields');
+  const isCreditCard = element.querySelector('.payment-label').textContent === 'Pay by Card Credit';
+  cardFields.style.display = isCreditCard ? 'block' : 'none';
+}
+
+// Load checkout data
+function loadCheckoutData() {
+  try {
+    const data = sessionStorage.getItem('wearopia_checkout_data');
+    if (!data) {
+      showToast('Empty Cart', 'Your cart is empty. Redirecting to cart page...', 'warning');
+      setTimeout(() => window.location.href = 'shopping-cart.html', 1500);
+      return null;
+    }
+    return JSON.parse(data);
+  } catch (e) {
+    console.error('Error loading checkout data:', e);
+    return null;
+  }
+}
+
+// Render order items
+function renderCheckoutItems(items) {
+  const container = document.getElementById('orderItemsContainer');
+  const itemsHTML = items.map((item, index) => `
+    <div class="order-item" data-index="${index}">
+      <div class="item-image" style="background-image: url('${item.image}');"></div>
+      <div class="item-details">
+        <div class="item-name">${item.name}</div>
+        <div class="item-color">${item.variant}</div>
+        <div class="item-qty">
+<span id="cart-items-count">Items: 0</span>
+          
+        </div>
+      </div>
+      <div class="item-price">${(item.price * item.qty).toFixed(2)}</div>
+    </div>
+  `).join('');
+  
+  container.innerHTML = itemsHTML;
+}
+
+// Update quantity
+function updateQty(index, change) {
+  const checkoutData = loadCheckoutData();
+  if (!checkoutData) return;
+
+  checkoutData.items[index].qty = Math.max(1, checkoutData.items[index].qty + change);
+  sessionStorage.setItem('wearopia_checkout_data', JSON.stringify(checkoutData));
+  
+  renderCheckoutItems(checkoutData.items);
+  recalculateTotals(checkoutData);
+}
+
+// Recalculate totals
+function recalculateTotals(data) {
+  let subtotal = 0;
+  data.items.forEach(item => {
+    subtotal += item.price * item.qty;
+  });
+  
+  document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)}`;
+  
+  // Handle coupon discount
+  let discount = 0;
+  if (data.coupon) {
+    const discountBadge = document.getElementById('discountBadge');
+    discountBadge.style.display = 'flex';
+    document.getElementById('couponCode').textContent = data.coupon.code;
+    
+    if (data.coupon.type === 'percentage') {
+      discount = subtotal * (data.coupon.value / 100);
+    } else {
+      discount = data.coupon.value;
+    }
+    
+    document.getElementById('discountValue').textContent = `-${discount.toFixed(2)}`;
+  }
+  
+  const shipping = data.shipping || 0;
+  document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping.toFixed(2)}` : 'Free';
+  
+  const total = subtotal + shipping - discount;
+  document.getElementById('total').textContent = `${total.toFixed(2)}`;
+  
+  data.subtotal = subtotal;
+  data.discount = discount;
+  data.total = total;
+  sessionStorage.setItem('wearopia_checkout_data', JSON.stringify(data));
+}
+
+// Generate order ID
+function generateOrderId() {
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 10000);
+  return `#${timestamp.toString().slice(-5)}_${random}`;
+}
+
+// Place order
+
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+  const checkoutData = loadCheckoutData();
+  
+  if (checkoutData) {
+    renderCheckoutItems(checkoutData.items);
+    recalculateTotals(checkoutData);
+    
+    // Update cart badge
+    const totalQty = checkoutData.items.reduce((sum, item) => sum + item.qty, 0);
+    cartBadge.textContent = totalQty;
+    if (totalQty > 0) cartBadge.classList.add('show');
+  }
+  
+  document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
+});
+
+// Format card number
+const cardNumberInput = document.getElementById('cardNumber');
+if (cardNumberInput) {
+  cardNumberInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\s/g, '');
+    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+    e.target.value = formattedValue;
+  });
+}
+
+// Format expiry date
+const expiryInput = document.getElementById('expiryDate');
+if (expiryInput) {
+  expiryInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+      value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    }
+    e.target.value = value;
+  });
+}
+
+
+
+  // simulate getting cart items from localStorage or session
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  document.getElementById("cart-items-count").textContent = `Items: ${totalItems}`;
+
+// --- HELPER: read cart/checkount data from known keys (robust) ---
+function getCartData() {
+  // try checkout data in sessionStorage first (used by checkout page)
+  const checkoutRaw = sessionStorage.getItem('wearopia_checkout_data');
+  if (checkoutRaw) {
+    try {
+      const parsed = JSON.parse(checkoutRaw);
+      if (parsed && Array.isArray(parsed.items)) return parsed;
+    } catch (e) { /* ignore parse error */ }
+  }
+
+  // fallback to cart in localStorage (used by site cart)
+  const cartRaw = localStorage.getItem('wearopia_cart_v1') || localStorage.getItem('wearopia_cart');
+  if (cartRaw) {
+    try {
+      const parsed = JSON.parse(cartRaw);
+      // normalize to { items: [...] }
+      if (Array.isArray(parsed)) return { items: parsed };
+      if (parsed && Array.isArray(parsed.items)) return parsed;
+    } catch (e) { /* ignore */ }
+  }
+
+  return { items: [] };
+}
+
+// --- update cart counts (badge + any global displays) ---
+function updateCartCounts() {
+  const data = getCartData();
+  const totalQty = data.items.reduce((s, it) => s + (Number(it.qty) || Number(it.quantity) || 0), 0);
+
+  // update top navbar badge (if exists)
+  const cartBadge = document.getElementById('cartCount');
+  if (cartBadge) {
+    cartBadge.textContent = totalQty;
+    if (totalQty > 0) cartBadge.classList.add('show'); // keep existing behavior
+    else cartBadge.classList.remove('show');
+  }
+
+  // update any global element that should show total items (optional)
+  const globalCountEls = document.querySelectorAll('.global-cart-items-count');
+  globalCountEls.forEach(el => el.textContent = totalQty);
+}
+
+// --- render order items: show qty as plain text, remove qty-btn ---
+function renderCheckoutItems(items) {
+  const container = document.getElementById('orderItemsContainer');
+  if (!container) return;
+
+  const itemsHTML = items.map((item, index) => {
+    const qty = Number(item.qty) || Number(item.quantity) || 1;
+    const price = Number(item.price) || 0;
+    const totalPrice = (price * qty).toFixed(2);
+
+    return `
+      <div class="order-item" data-index="${index}">
+        <div class="item-image" style="background-image: url('${item.image || ''}');"></div>
+        <div class="item-details">
+          <div class="item-name">${item.name || 'Product'}</div>
+          <div class="item-color">${item.variant || ''}</div>
+          <div class="item-qty-text">Quantity: <span class="item-qty-value">${qty}</span></div>
+        </div>
+        <div class="item-price">${totalPrice}</div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = itemsHTML;
+}
+
+// --- recalc totals (unchanged behavior but ensure numbers are correct) ---
+function recalculateTotals(data) {
+  let subtotal = 0;
+  (data.items || []).forEach(item => {
+    const qty = Number(item.qty) || Number(item.quantity) || 1;
+    const price = Number(item.price) || 0;
+    subtotal += price * qty;
+  });
+
+  document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)}`;
+
+  let discount = 0;
+  if (data.coupon) {
+    const discountBadge = document.getElementById('discountBadge');
+    if (discountBadge) discountBadge.style.display = 'flex';
+    document.getElementById('couponCode').textContent = data.coupon.code || 'Coupon';
+
+    if (data.coupon.type === 'percentage') discount = subtotal * (data.coupon.value / 100);
+    else discount = Number(data.coupon.value) || 0;
+
+    document.getElementById('discountValue').textContent = `-${discount.toFixed(2)}`;
+  } else {
+    const discountBadge = document.getElementById('discountBadge');
+    if (discountBadge) discountBadge.style.display = 'none';
+  }
+
+  const shipping = Number(data.shipping) || 0;
+  document.getElementById('shippingCost').textContent = shipping > 0 ? `${shipping.toFixed(2)}` : 'Free';
+
+  const total = subtotal + shipping - discount;
+  document.getElementById('total').textContent = `${total.toFixed(2)}`;
+
+  // persist computed fields
+  data.subtotal = subtotal;
+  data.discount = discount;
+  data.total = total;
+  sessionStorage.setItem('wearopia_checkout_data', JSON.stringify(data));
+}
+
+// --- initialize page: load data, render, update counts ---
+document.addEventListener('DOMContentLoaded', function() {
+  const checkoutData = getCartData();
+
+  // render list
+  renderCheckoutItems(checkoutData.items || []);
+
+  // recalc totals and write them (if checkout-style object)
+  recalculateTotals(checkoutData);
+
+  // update global cart count/badge
+  updateCartCounts();
+
+  // optional: observe storage changes from other tabs/windows
+  window.addEventListener('storage', (e) => {
+    if (['wearopia_checkout_data', 'wearopia_cart_v1', 'wearopia_cart'].includes(e.key)) {
+      const newData = getCartData();
+      renderCheckoutItems(newData.items || []);
+      recalculateTotals(newData);
+      updateCartCounts();
+    }
+  });
+});
+
+// Helper: Luhn algorithm for credit card validation
+function validateCreditCard(number) {
+  const clean = number.replace(/\D/g, '');
+  if (!/^\d{13,19}$/.test(clean)) return false;
+  let sum = 0;
+  let doubleIt = false;
+  for (let i = clean.length - 1; i >= 0; i--) {
+    let digit = parseInt(clean[i]);
+    if (doubleIt) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    doubleIt = !doubleIt;
+  }
+  return sum % 10 === 0;
+}
+
+// --- Updated Place Order with All Validations ---
+function placeOrder() {
+  const firstName = document.getElementById('firstName');
+  const lastName = document.getElementById('lastName');
+  const phone = document.getElementById('phone');
+  const email = document.getElementById('email');
+  const address = document.getElementById('address');
+  const country = document.getElementById('country');
+  const city = document.getElementById('city');
+  const cardNumber = document.getElementById('cardNumber');
+  const expiry = document.getElementById('expiryDate');
+  const cvc = document.getElementById('cvc');
+
+  // Helper: scroll + focus on invalid field
+  function focusAndScroll(element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    element.focus();
+  }
+
+  // --- Name validation ---
+  const nameRegex = /^[A-Za-z]+$/;
+  if (!nameRegex.test(firstName.value.trim())) {
+    showToast('Invalid Name', 'First name must contain letters only', 'error');
+    focusAndScroll(firstName);
+    return;
+  }
+  if (lastName.value.trim() && !nameRegex.test(lastName.value.trim())) {
+    showToast('Invalid Name', 'Last name must contain letters only', 'error');
+    focusAndScroll(lastName);
+    return;
+  }
+
+  // --- Phone validation ---
+  const phoneValue = phone.value.trim();
+  const phoneRegex = /^\d{10,15}$/; // 10–15 digits only
+  if (!phoneRegex.test(phoneValue)) {
+    showToast('Invalid Phone', 'Please enter a valid phone number (10–15 digits)', 'error');
+    focusAndScroll(phone);
+    return;
+  }
+
+  // --- Email validation ---
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.value.trim())) {
+    showToast('Invalid Email', 'Please enter a valid email address', 'error');
+    focusAndScroll(email);
+    return;
+  }
+
+  // --- Address validation ---
+  if (!address.value.trim()) {
+    showToast('Missing Information', 'Please enter your street address', 'warning');
+    focusAndScroll(address);
+    return;
+  }
+
+  if (!country.value) {
+    showToast('Missing Information', 'Please select your country', 'warning');
+    focusAndScroll(country);
+    return;
+  }
+
+  if (!city.value.trim()) {
+    showToast('Missing Information', 'Please enter your city', 'warning');
+    focusAndScroll(city);
+    return;
+  }
+
+  // --- Payment validation (Credit Card) ---
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+  if (paymentMethod === 'Credit Card') {
+    if (!validateCreditCard(cardNumber.value.trim())) {
+      showToast('Invalid Card', 'Please enter a valid credit card number', 'error');
+      focusAndScroll(cardNumber);
+      return;
+    }
+
+    const expMatch = expiry.value.trim().match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+    if (!expMatch) {
+      showToast('Invalid Expiry', 'Expiration must be in MM/YY format', 'error');
+      focusAndScroll(expiry);
+      return;
+    }
+
+    const [_, mm, yy] = expMatch;
+    const expDate = new Date(`20${yy}`, mm);
+    const now = new Date();
+    if (expDate <= now) {
+      showToast('Expired Card', 'This card has expired', 'error');
+      focusAndScroll(expiry);
+      return;
+    }
+
+    if (!/^\d{3}$/.test(cvc.value.trim())) {
+      showToast('Invalid CVC', 'CVC must be 3 digits', 'error');
+      focusAndScroll(cvc);
+      return;
+    }
+  }
+
+  // --- Continue checkout logic ---
+  const checkoutData = loadCheckoutData();
+  if (!checkoutData) {
+    showToast('Empty Cart', 'Your cart is empty', 'error');
+    return;
+  }
+
+  const orderId = generateOrderId();
+  const orderData = {
+    orderId,
+    customer: {
+      firstName: firstName.value.trim(),
+      lastName: lastName.value.trim(),
+      phone: phone.value.trim(),
+      email: email.value.trim()
+    },
+    shipping: {
+      address: address.value.trim(),
+      country: country.value,
+      city: city.value.trim(),
+      state: document.getElementById('state').value,
+      zipCode: document.getElementById('zipCode').value
+    },
+    payment: { method: paymentMethod },
+    items: checkoutData.items,
+    subtotal: checkoutData.subtotal,
+    total: checkoutData.total,
+    orderDate: new Date().toISOString()
+  };
+
+  sessionStorage.setItem('wearopia_order_complete', JSON.stringify(orderData));
+  sessionStorage.removeItem('wearopia_checkout_data');
+  localStorage.removeItem('wearopia_cart_v1');
+
+  showToast('Order Placed!', 'Redirecting to confirmation...', 'success');
+  setTimeout(() => (window.location.href = 'complete-order.html'), 1200);
+}
+
+
+
+
+// Helper: Luhn algorithm for credit card validation
+function validateCreditCard(number) {
+  const clean = number.replace(/\D/g, '');
+  if (!/^\d{13,19}$/.test(clean)) return false;
+  let sum = 0;
+  let doubleIt = false;
+  for (let i = clean.length - 1; i >= 0; i--) {
+    let digit = parseInt(clean[i]);
+    if (doubleIt) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    doubleIt = !doubleIt;
+  }
+  return sum % 10 === 0;
+}
+
+// --- Updated Place Order with All Validations ---
+function placeOrder() {
+  const firstName = document.getElementById('firstName');
+  const lastName = document.getElementById('lastName');
+  const phone = document.getElementById('phone');
+  const email = document.getElementById('email');
+  const address = document.getElementById('address');
+  const country = document.getElementById('country');
+  const city = document.getElementById('city');
+  const cardNumber = document.getElementById('cardNumber');
+  const expiry = document.getElementById('expiryDate');
+  const cvc = document.getElementById('cvc');
+
+  // Helper: scroll + focus on invalid field
+  function focusAndScroll(element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    element.focus();
+  }
+
+  // --- Name validation ---
+  const nameRegex = /^[A-Za-z]+$/;
+  if (!nameRegex.test(firstName.value.trim())) {
+    showToast('Invalid Name', 'First name must contain letters only', 'error');
+    focusAndScroll(firstName);
+    return;
+  }
+  if (lastName.value.trim() && !nameRegex.test(lastName.value.trim())) {
+    showToast('Invalid Name', 'Last name must contain letters only', 'error');
+    focusAndScroll(lastName);
+    return;
+  }
+
+  // --- Phone validation ---
+  const phoneValue = phone.value.trim();
+  const phoneRegex = /^\d{10,15}$/; // 10–15 digits only
+  if (!phoneRegex.test(phoneValue)) {
+    showToast('Invalid Phone', 'Please enter a valid phone number (10–15 digits)', 'error');
+    focusAndScroll(phone);
+    return;
+  }
+
+  // --- Email validation ---
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.value.trim())) {
+    showToast('Invalid Email', 'Please enter a valid email address', 'error');
+    focusAndScroll(email);
+    return;
+  }
+
+  // --- Address validation ---
+  if (!address.value.trim()) {
+    showToast('Missing Information', 'Please enter your street address', 'warning');
+    focusAndScroll(address);
+    return;
+  }
+
+  if (!country.value) {
+    showToast('Missing Information', 'Please select your country', 'warning');
+    focusAndScroll(country);
+    return;
+  }
+
+  if (!city.value.trim()) {
+    showToast('Missing Information', 'Please enter your city', 'warning');
+    focusAndScroll(city);
+    return;
+  }
+
+  // --- Payment validation (Credit Card) ---
+  const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+  if (paymentMethod === 'Credit Card') {
+    if (!validateCreditCard(cardNumber.value.trim())) {
+      showToast('Invalid Card', 'Please enter a valid credit card number', 'error');
+      focusAndScroll(cardNumber);
+      return;
+    }
+
+    const expMatch = expiry.value.trim().match(/^(0[1-9]|1[0-2])\/(\d{2})$/);
+    if (!expMatch) {
+      showToast('Invalid Expiry', 'Expiration must be in MM/YY format', 'error');
+      focusAndScroll(expiry);
+      return;
+    }
+
+    const [_, mm, yy] = expMatch;
+    const expDate = new Date(`20${yy}`, mm);
+    const now = new Date();
+    if (expDate <= now) {
+      showToast('Expired Card', 'This card has expired', 'error');
+      focusAndScroll(expiry);
+      return;
+    }
+
+    if (!/^\d{3}$/.test(cvc.value.trim())) {
+      showToast('Invalid CVC', 'CVC must be 3 digits', 'error');
+      focusAndScroll(cvc);
+      return;
+    }
+  }
+
+  // --- Continue checkout logic ---
+  const checkoutData = loadCheckoutData();
+  if (!checkoutData) {
+    showToast('Empty Cart', 'Your cart is empty', 'error');
+    return;
+  }
+
+  const orderId = generateOrderId();
+  const orderData = {
+    orderId,
+    customer: {
+      firstName: firstName.value.trim(),
+      lastName: lastName.value.trim(),
+      phone: phone.value.trim(),
+      email: email.value.trim()
+    },
+    shipping: {
+      address: address.value.trim(),
+      country: country.value,
+      city: city.value.trim(),
+      state: document.getElementById('state').value,
+      zipCode: document.getElementById('zipCode').value
+    },
+    payment: { method: paymentMethod },
+    items: checkoutData.items,
+    subtotal: checkoutData.subtotal,
+    total: checkoutData.total,
+    orderDate: new Date().toISOString()
+  };
+
+  sessionStorage.setItem('wearopia_order_complete', JSON.stringify(orderData));
+  sessionStorage.removeItem('wearopia_checkout_data');
+  localStorage.removeItem('wearopia_cart_v1');
+
+  showToast('Order Placed!', 'Redirecting to confirmation...', 'success');
+  setTimeout(() => (window.location.href = 'complete-order.html'), 1200);
+} -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="JavaScript/navbar-test.js"></script>
+
+<script>
+    $('<link/>', {
+  rel: 'stylesheet',
+  type: 'text/css',
+  href: 'CSS/navbar.css'
+}).appendTo('head');
+
+    // تحميل الناف بار
+    $("#navbar-placeholder").load("navbar-test.html", function () {
+      initNavbar();
+      renderWishlist();
+    });
+
+    // عرض الوش ليست
+    function renderWishlist() {
+      let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      const container = $("#wishlistItems");
+      container.empty();
+
+      if (wishlist.length === 0) {
+        container.html("<p class='text-center text-muted'>Your wishlist is empty 💔</p>");
+        return;
+      }
+
+      wishlist.forEach((item, index) => {
+        container.append(`
+          <div class="wishlist-item">
+            <h5>${item.name}</h5>
+            <button class="btn btn-sm btn-danger remove-item" data-index="${index}">
+              <i class="bi bi-trash"></i> Remove
+            </button>
+          </div>
+        `);
+      });
+
+      $(".remove-item").on("click", function () {
+        const index = $(this).data("index");
+        wishlist.splice(index, 1);
+        localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        renderWishlist();
+        Swal.fire("Removed!", "Item removed from wishlist.", "success");
+      });
+    }
+  </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const placeOrderBtn = document.getElementById("placeOrderBtn");
+  const cardFields = document.getElementById("cardFields");
+  const orderItemsContainer = document.getElementById("orderItemsContainer");
+  const subtotalEl = document.getElementById("subtotal");
+  const totalEl = document.getElementById("total");
+  const discountValueEl = document.getElementById("discountValue");
+  const shippingCostEl = document.getElementById("shippingCost");
+
+  // ---------- Validation Helpers ----------
+  function showError(field, message) {
+    field.classList.add("error-border");
+    let errorEl = field.nextElementSibling;
+    if (!errorEl || !errorEl.classList.contains("error-msg")) {
+      errorEl = document.createElement("div");
+      errorEl.classList.add("error-msg");
+      field.parentNode.insertBefore(errorEl, field.nextSibling);
+    }
+    errorEl.textContent = message;
+  }
+
+  function clearError(field) {
+    field.classList.remove("error-border");
+    let errorEl = field.nextElementSibling;
+    if (errorEl && errorEl.classList.contains("error-msg")) {
+      errorEl.textContent = "";
+    }
+  }
+
+  function validateField(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    if (!field.value.trim()) {
+      showError(field, message);
+      field.focus();
+      return false;
+    } else {
+      clearError(field);
+      return true;
+    }
+  }
+
+  function validateEmail(fieldId) {
+    const field = document.getElementById(fieldId);
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(field.value)) {
+      showError(field, "Please enter a valid email.");
+      field.focus();
+      return false;
+    } else {
+      clearError(field);
+      return true;
+    }
+  }
+
+  function validatePhone(fieldId) {
+    const field = document.getElementById(fieldId);
+    const re = /^[0-9]{7,15}$/;
+    if (!re.test(field.value)) {
+      showError(field, "Please enter a valid phone number.");
+      field.focus();
+      return false;
+    } else {
+      clearError(field);
+      return true;
+    }
+  }
+
+  function validateAll() {
+    let valid = true;
+
+    valid = validateField("firstName", "First name is required.") && valid;
+    valid = validateField("phone", "Phone number is required.") && valid;
+    valid = validatePhone("phone") && valid;
+    valid = validateField("email", "Email is required.") && valid;
+    valid = validateEmail("email") && valid;
+    valid = validateField("address", "Address is required.") && valid;
+    valid = validateField("country", "Country is required.") && valid;
+    valid = validateField("city", "City is required.") && valid;
+
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
+    if (!paymentMethod) {
+      alert("Please select a payment method.");
+      return false;
+    }
+
+    if (paymentMethod === "Credit Card") {
+      valid = validateField("cardNumber", "Card number is required.") && valid;
+      valid = validateField("expiryDate", "Expiration date is required.") && valid;
+      valid = validateField("cvc", "CVC is required.") && valid;
+    }
+
+    return valid;
+  }
+
+  // ---------- Payment Selection ----------
+  window.selectPayment = function(el) {
+    document.querySelectorAll(".payment-option").forEach(opt => {
+      opt.classList.remove("active");
+      opt.querySelector("input").checked = false;
+    });
+    el.classList.add("active");
+    el.querySelector("input").checked = true;
+    cardFields.style.display = el.querySelector("input").value === "Credit Card" ? "block" : "none";
+  };
+
+  // ---------- Order Placement ----------
+  function placeOrder() {
+    const cart = JSON.parse(localStorage.getItem("wearopia_cart")) || {};
+    const allProducts = JSON.parse(localStorage.getItem("wearopia_products")) || {};
+    const orderItems = Object.keys(cart).map(id => {
+      const product = allProducts[id] || {};
+      return {
+        id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        quantity: cart[id]
+      };
+    });
+
+    const subtotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const discount = subtotal > 100 ? subtotal * 0.1 : 0;
+    const total = subtotal - discount;
+
+    const orderData = {
+      orderId: `#${Math.floor(Math.random() * 9000 + 1000)}_${Math.floor(Math.random() * 90000 + 10000)}`,
+      orderDate: new Date(),
+      total,
+      payment: { method: document.querySelector('input[name="payment"]:checked').value },
+      items: orderItems
+    };
+
+    sessionStorage.setItem("wearopia_order_complete", JSON.stringify(orderData));
+    localStorage.removeItem("wearopia_cart");
+    window.location.href = "complete-order.html";
+  }
+
+  placeOrderBtn.addEventListener("click", function() {
+    if (validateAll()) {
+      placeOrder();
+    }
+  });
+
+  // ---------- Order Summary ----------
+  function renderOrderSummary() {
+    orderItemsContainer.innerHTML = "";
+    let subtotal = 0;
+    const cart = JSON.parse(localStorage.getItem("wearopia_cart")) || {};
+    const allProducts = JSON.parse(localStorage.getItem("wearopia_products")) || {};
+
+    if (Object.keys(cart).length === 0) {
+      orderItemsContainer.innerHTML = "<p class='text-center text-muted py-3'>No items in your cart.</p>";
+    }
+
+    Object.keys(cart).forEach(id => {
+      const product = allProducts[id];
+      if (!product) return;
+      const quantity = cart[id];
+      const totalPrice = product.price * quantity;
+      subtotal += totalPrice;
+
+      orderItemsContainer.innerHTML += `
+        <div class="d-flex align-items-center py-2 gap-3">
+          <img src="${product.image}" alt="${product.name}" style="width:50px;height:50px;object-fit:cover;border-radius:4px;">
+          <div class="flex-grow-1">
+            <div>${product.name}</div>
+            <div class="text-muted">Qty: ${quantity}</div>
+          </div>
+          <div>$${totalPrice.toFixed(2)}</div>
+        </div>
+      `;
+    });
+
+    const discount = subtotal > 100 ? subtotal * 0.1 : 0;
+    discountValueEl.textContent = discount > 0 ? "-$" + discount.toFixed(2) : "$0.00";
+    subtotalEl.textContent = "$" + subtotal.toFixed(2);
+    const shipping = 0;
+    shippingCostEl.textContent = shipping === 0 ? "Free" : "$" + shipping.toFixed(2);
+    totalEl.textContent = "$" + (subtotal + shipping - discount).toFixed(2);
+  }
+
+  renderOrderSummary();
+});
+</script>
+
+
+
+
+</body>
+</html>
